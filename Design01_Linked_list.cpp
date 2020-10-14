@@ -1,0 +1,248 @@
+#include "stdc++.h"
+using namespace std;
+typedef struct Node
+{
+    int data;
+    struct Node *prior;
+    struct Node *next;
+} Node;
+typedef struct Node *LinkList;
+int LinkListLengthL1(LinkList *L)
+{
+    int count = 0;
+    LinkList p;
+    p = (*L)->next;
+    while (p)
+    {
+        count++;
+        p = p->next;
+    }
+    return count;
+}
+int ListElemGet(LinkList *L, int n)
+{
+    LinkList p = (LinkList)malloc(sizeof(Node));
+    p = (*L);
+    int x;
+    for (int i = 0; i < n; i++)
+    {
+        x = p->data;
+        p = p->next;
+    }
+    return x;
+}
+int InitLinkListL1(LinkList *L, int n)
+{
+    LinkList p, r;
+    *L = (LinkList)malloc(sizeof(Node));
+    r = *L;
+    if (!r)
+    {
+        printf("error!\n");
+        return -1;
+    }
+    for (int i = 0; i < n; i++)
+    {
+        p = (LinkList)malloc(sizeof(Node));
+        scanf("%d", &(p->data));
+        r->next = p;
+        r = p;
+    }
+    r->next = NULL;
+    return 1;
+}
+Node InitDListL3(LinkList &L3, LinkList &L1)
+{
+    (L3) = (LinkList)malloc(sizeof(Node));
+    (L3)->prior = NULL;
+    (L3)->next = NULL;
+    (L3)->data = ListElemGet(&L1, 2);
+    LinkList p = (L3);
+    for (int i = 2; i <= LinkListLengthL1(&L1); i++)
+    {
+        LinkList b = (LinkList)malloc(sizeof(Node));
+        b->prior = NULL;
+        b->next = NULL;
+        b->data = ListElemGet(&L1, i + 1);
+        p->next = b;
+        b->prior = p;
+        p = p->next;
+    }
+    return *L3;
+}
+int InitLinkListL2(LinkList *L, int n)
+{
+    LinkList p, q, r;
+    int i, j, temp;
+    *L = (LinkList)malloc(sizeof(Node));
+    r = *L;
+    if (!r)
+    {
+        printf("error!\n");
+        return -1;
+    }
+    for (int i = 1; i < n; i++)
+    {
+        p = (LinkList)malloc(sizeof(Node));
+        scanf("%d", &(p->data)); //正常输入,之后再进行排序
+        if (p->data > p->prior->data)
+        {
+            r->next = p;
+            r = p;
+        }
+    } //或者考虑一下插入排序
+    p = r->next;
+    for (i = 0; i < n; i++)
+    {
+        for (j = i; j < n; j++)
+        {
+            if (p->data > p->next->data)
+            {
+                temp = p->data;
+                p->data = p->next->data;
+                p->next->data = p->data;
+            }
+        }
+    }
+    return 1;
+}
+void ListSort(LinkList *L)
+{
+    int flag = 1;
+    while (flag)
+    {
+        flag = 0;
+        LinkList p, p1 = (*L)->next;
+        while (p1->next)
+        {
+            p = p1;
+            p1 = p->next;
+            if (p->data > p1->data)
+            {
+                int temp = p->data;
+                p->data = p1->data;
+                p1->data = temp;
+                flag = 1;
+            }
+        }
+    }
+}
+
+void ListPrint(LinkList *L)
+{
+    LinkList p;
+    p = (LinkList)malloc(sizeof(Node));
+    p = (*L)->next;
+    while (p->next)
+    {
+        printf("[%d]->", p->data);
+        p = p->next;
+    }
+    printf("[%d]\n", p->data);
+}
+void ListPrintL3(LinkList *L3)
+{
+    LinkList p = (*L3);
+    while (p)
+    {
+        if (p->next == NULL)
+        {
+            printf("[%d]\n", p->data);
+        }
+        else
+        {
+            printf("[%d]<->", p->data);
+        }
+        p = p->next;
+    }
+}
+int ListGetMax(LinkList *L)
+{
+    int max = 0;
+    LinkList p;
+    p = (LinkList)malloc(sizeof(Node));
+    p = (*L)->next;
+    while (p)
+    {
+        if (p->data > max)
+            max = p->data;
+        p = p->next;
+    }
+    return max;
+}
+int ListGetMin(LinkList *L)
+{
+    int min;
+    LinkList p;
+    p = (LinkList)malloc(sizeof(Node));
+    p = (*L)->next;
+    min = p->data;
+    while (p)
+    {
+        if (p->data < min)
+            min = p->data;
+        p = p->next;
+    }
+    return min;
+}
+int ListSum(LinkList *L)
+{
+    LinkList p;
+    int sum = 0;
+    p = (LinkList)malloc(sizeof(Node));
+    p = (*L)->next;
+    while (p)
+    {
+        sum += p->data;
+        p = p->next;
+    }
+    return sum;
+}
+int ListSearch(LinkList *L, int x)
+{
+    int count = 0;
+    LinkList p = (LinkList)malloc(sizeof(Node));
+    p = (*L);
+    while (p->next && p->data != x)
+    {
+        count++;
+        p = p->next;
+    }
+    if (p->data != x)
+    {
+        printf("Not Found\n");
+        return 0;
+    }
+    else
+        count++;
+    return count;
+}
+
+int main(void)
+{
+    LinkList L1, L2, L3;
+    L1 = (LinkList)malloc(sizeof(Node));
+    L2 = (LinkList)malloc(sizeof(Node));
+    L3 = (LinkList)malloc(sizeof(Node));
+    int m, n, x;
+    scanf("%d", &m);
+    InitLinkListL1(&L1, m);
+    ListPrint(&L1);
+    printf("Max of L1 is %d\n", ListGetMax(&L1));
+    printf("Min of L1 is %d\n", ListGetMin(&L1));
+    scanf("%d", &n);
+    InitLinkListL1(&L2, n);
+    ListSort(&L2);
+    ListPrint(&L2);
+    printf("The length of L2 is %d\n", LinkListLengthL1(&L2));
+    printf("The sum of L2 is %d\n", ListSum(&L2));
+    InitDListL3(L3, L1);
+    printf("L3(generated by L1):\n");
+    ListPrintL3(&L3);
+    scanf("%d", &x);
+    if (ListSearch(&L3, x) == 0)
+        return 0;
+    else
+        printf("The place of x is %d\n", ListSearch(&L3, x));
+    return 0;
+}
